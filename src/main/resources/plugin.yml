@@ -1,0 +1,14 @@
+name: CloudCraftEngine
+version: '${version}'
+main: com.cloudcraft.engine.CloudCraftEngine
+api-version: '1.20'
+description: Revolutionary multithreaded Minecraft server implementation
+author: CloudCraft Team
+website: https://github.com/yourusername/cloudcraft-engine
+
+commands:
+  stresstest:
+    description: Run a stress test with configurable parameters
+    usage: /stresstest [players] [duration] [warmup]
+    permission: cloudcraft.admin
+    permission-message: You must be an operator to use this command.

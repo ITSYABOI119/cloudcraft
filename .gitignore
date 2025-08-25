@@ -31,3 +31,23 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Gradle
+.gradle/
+build/
+
+# Test server
+test-server/world/
+test-server/world_nether/
+test-server/world_the_end/
+test-server/plugins/
+test-server/logs/
+test-server/cache/
+test-server/libraries/
+test-server/versions/
+test-server/*.jar
+test-server/*.json
+test-server/*.yml
+test-server/*.txt
+test-server/crash-reports/
+test-server/.console_history
