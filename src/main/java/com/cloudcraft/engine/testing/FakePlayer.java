@@ -50,7 +50,7 @@ public class FakePlayer {
             case BUILDING -> simulateBuilding();
             case IDLE -> simulateIdle();
         }
-
+        
         // Keep player in bounds
         keepInBounds();
         
@@ -81,17 +81,19 @@ public class FakePlayer {
     private void simulateMining() {
         // Simulate mining activity (no actual block changes)
         location.add(
-                random.nextDouble() * 0.2 - 0.1,
-                0,
-                random.nextDouble() * 0.2 - 0.1);
+            random.nextDouble() * 0.2 - 0.1,
+            0,
+            random.nextDouble() * 0.2 - 0.1
+        );
     }
     
     private void simulateBuilding() {
         // Simulate building activity (no actual block changes)
         location.add(
-                random.nextDouble() * 0.2 - 0.1,
-                0,
-                random.nextDouble() * 0.2 - 0.1);
+            random.nextDouble() * 0.2 - 0.1,
+            0,
+            random.nextDouble() * 0.2 - 0.1
+        );
     }
     
     private void simulateIdle() {
