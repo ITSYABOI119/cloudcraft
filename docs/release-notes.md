@@ -26,6 +26,12 @@
 - Requires Java 21+ and Paper 1.20.4+
 
 ## Installation
+### Requirements
+- Paper 1.20.4 or newer
+- Java 21 or newer (Java 21 LTS recommended)
+- 8GB RAM minimum
+
+### Steps
 1. Download the JAR
 2. Place in your plugins folder
 3. Restart server
