@@ -13,14 +13,24 @@ Just ran a stress test with **200 players** on my Ryzen 2700X:
 CloudCraft Engine uses Java 21's Virtual Threads to process entities in parallel. Instead of everything running on one thread, the world is divided into regions that process simultaneously.
 
 ## Free Beta Access
-- **GitHub Release:** https://github.com/yourusername/cloudcraft/releases/tag/v0.1.0-beta
-- **Requirements:** Java 21, Paper 1.20.4+
-- **Beta Limits:** 200 players max during beta testing
+- **GitHub Release:** https://github.com/ITSYABOI119/cloudcraft/releases/tag/v0.1.0-beta
+- **Requirements:**
+  - Java 21 or newer (LTS recommended)
+  - Paper 1.20.4 or newer
+  - 8GB RAM minimum
+- **Beta Limits:** 
+  - 200 players max during beta
+  - Free until October 25, 2025
 
 ## Try It Yourself
-1. Download the JAR
-2. Drop in plugins folder
-3. Run `/stresstest` to see the magic
+1. Download the JAR from the release page
+2. Drop it in your plugins folder
+3. Restart your server
+4. Run `/stresstest 200 60 10` to see the magic
+   - This runs a full test with 200 players
+   - 10 second warmup period
+   - 60 second test duration
+5. Check the generated report in `plugins/CloudCraftEngine/stress-test-results/`
 
 Looking for server admins to test and provide feedback. It's completely **FREE during beta**.
 
