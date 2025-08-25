@@ -31,7 +31,7 @@ CloudCraft Engine uses Java 21's Virtual Threads to process entities in parallel
 ## Beta Program
 - Free during beta period
 - Limited to 200 players
-- Expires March 1, 2025
+- Expires October 25, 2025
 - Full version will be unlimited
 
 ## Development Progress

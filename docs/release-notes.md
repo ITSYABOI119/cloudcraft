@@ -21,7 +21,7 @@
 
 ## Beta Program Details
 - Free during beta period
-- Expires: March 1, 2025
+- Expires: October 25, 2025
 - Limited to 200 players (full version will be unlimited)
 - Requires Java 21+ and Paper 1.20.4+
 
@@ -44,4 +44,4 @@
 ## Known Limitations
 - Beta is capped at 200 players
 - Some advanced features disabled during beta
-- Expires March 1, 2025
+- Expires October 25, 2025
