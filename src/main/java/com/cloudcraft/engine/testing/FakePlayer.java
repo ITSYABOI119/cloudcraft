@@ -2,10 +2,7 @@ package com.cloudcraft.engine.testing;
 
 import com.cloudcraft.engine.CloudCraftEngine;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -19,7 +16,6 @@ public class FakePlayer {
     private final UUID uuid;
     private Location location;
     private final Random random;
-    private final Vector velocity;
     private int behaviorTicks;
     private BehaviorState state;
     
@@ -32,7 +28,6 @@ public class FakePlayer {
         this.uuid = UUID.randomUUID();
         this.location = spawnLocation.clone();
         this.random = new Random();
-        this.velocity = new Vector();
         this.behaviorTicks = 0;
         this.state = BehaviorState.IDLE;
     }
@@ -55,10 +50,7 @@ public class FakePlayer {
             case BUILDING -> simulateBuilding();
             case IDLE -> simulateIdle();
         }
-        
-        // Update location
-        location.add(velocity);
-        
+
         // Keep player in bounds
         keepInBounds();
         
@@ -70,43 +62,36 @@ public class FakePlayer {
         // Randomly select new behavior
         BehaviorState[] states = BehaviorState.values();
         state = states[random.nextInt(states.length)];
-        
-        // Reset velocity
-        velocity.zero();
     }
     
     private void simulateWalking() {
         double angle = random.nextDouble() * Math.PI * 2;
-        velocity.setX(Math.cos(angle) * WALK_SPEED);
-        velocity.setZ(Math.sin(angle) * WALK_SPEED);
+        double dx = Math.cos(angle) * WALK_SPEED;
+        double dz = Math.sin(angle) * WALK_SPEED;
+        location.add(dx, 0, dz);
     }
     
     private void simulateSprinting() {
         double angle = random.nextDouble() * Math.PI * 2;
-        velocity.setX(Math.cos(angle) * SPRINT_SPEED);
-        velocity.setZ(Math.sin(angle) * SPRINT_SPEED);
+        double dx = Math.cos(angle) * SPRINT_SPEED;
+        double dz = Math.sin(angle) * SPRINT_SPEED;
+        location.add(dx, 0, dz);
     }
     
     private void simulateMining() {
-        // Find nearby block to mine
-        Location target = location.clone();
-        target.add(random.nextDouble() * 4 - 2, 0, random.nextDouble() * 4 - 2);
-        target.setY(target.getWorld().getHighestBlockYAt(target.getBlockX(), target.getBlockZ()));
-        
-        if (target.getBlock().getType() != Material.AIR) {
-            target.getBlock().setType(Material.AIR);
-        }
+        // Simulate mining activity (no actual block changes)
+        location.add(
+                random.nextDouble() * 0.2 - 0.1,
+                0,
+                random.nextDouble() * 0.2 - 0.1);
     }
     
     private void simulateBuilding() {
-        // Find nearby location to place block
-        Location target = location.clone();
-        target.add(random.nextDouble() * 4 - 2, 0, random.nextDouble() * 4 - 2);
-        target.setY(target.getWorld().getHighestBlockYAt(target.getBlockX(), target.getBlockZ()) + 1);
-        
-        if (target.getBlock().getType() == Material.AIR) {
-            target.getBlock().setType(Material.STONE);
-        }
+        // Simulate building activity (no actual block changes)
+        location.add(
+                random.nextDouble() * 0.2 - 0.1,
+                0,
+                random.nextDouble() * 0.2 - 0.1);
     }
     
     private void simulateIdle() {
@@ -129,7 +114,6 @@ public class FakePlayer {
             double angle = Math.atan2(dz, dx);
             location.setX(spawn.getX() + Math.cos(angle) * radius);
             location.setZ(spawn.getZ() + Math.sin(angle) * radius);
-            velocity.zero();
         }
     }
     

@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
 /**
- * Monitors and records performance metrics for the CloudCraft Engine
+ * Collects and analyzes performance metrics during stress testing
  */
 public class MetricsCollector {
     private final CloudCraftEngine plugin;

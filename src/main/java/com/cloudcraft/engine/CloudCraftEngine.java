@@ -4,14 +4,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import com.cloudcraft.engine.threading.EntityProcessor;
-import com.cloudcraft.engine.metrics.PerformanceMonitor;
+import com.cloudcraft.engine.metrics.MetricsCollector;
 import com.cloudcraft.engine.testing.StressTest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CloudCraftEngine extends JavaPlugin {
     private @Nullable EntityProcessor entityProcessor;
-    private @Nullable PerformanceMonitor performanceMonitor;
+    private @Nullable MetricsCollector metricsCollector;
     private @Nullable StressTest stressTest;
 
     @Override
@@ -19,7 +19,7 @@ public class CloudCraftEngine extends JavaPlugin {
         // Initialize with fallback to single-threaded mode if virtual threads are not available
         try {
             this.entityProcessor = new EntityProcessor(this);
-            this.performanceMonitor = new PerformanceMonitor(this);
+            this.metricsCollector = new MetricsCollector(this);
             getLogger().info("CloudCraft Engine initialized with virtual thread support");
         } catch (Exception e) {
             getLogger().severe("Failed to initialize virtual thread processor: " + e.getMessage());
@@ -36,8 +36,8 @@ public class CloudCraftEngine extends JavaPlugin {
         if (entityProcessor != null) {
             entityProcessor.shutdown();
         }
-        if (performanceMonitor != null) {
-            performanceMonitor.shutdown();
+        if (metricsCollector != null) {
+            metricsCollector.stop();
         }
     }
 
@@ -50,8 +50,8 @@ public class CloudCraftEngine extends JavaPlugin {
             }
 
             int players = 500;
-            int duration = 300;
-            int warmup = 30;
+            int duration = 60; // Shorter for demo
+            int warmup = 10; // Shorter for demo
 
             if (args.length >= 1) {
                 try {
@@ -80,17 +80,13 @@ public class CloudCraftEngine extends JavaPlugin {
                 }
             }
 
-            sender.sendMessage("§aStarting stress test with " + players + " players");
-            sender.sendMessage("§7Warmup: " + warmup + " seconds");
-            sender.sendMessage("§7Duration: " + duration + " seconds");
-
             this.stressTest = new StressTest(this)
                 .withPlayerCount(players)
                 .withWarmup(warmup)
                 .withDuration(duration)
                 .withSamplingInterval(20);
 
-            this.stressTest.startTest();
+            this.stressTest.startTest(sender);
             return true;
         }
 
