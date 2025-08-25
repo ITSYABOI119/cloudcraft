@@ -8,11 +8,16 @@ yarn-error.log
 .env
 .env.local
 .env.*.local
+*.env
+.env.*
 
 # Build output
 dist/
 build/
 out/
+target/
+*.class
+*.jar
 
 # IDE and editor files
 .idea/
@@ -20,34 +25,60 @@ out/
 *.swp
 *.swo
 .DS_Store
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
 
 # Logs
 logs/
 *.log
+test-server/logs/
 
 # Testing
 coverage/
-
-# Temporary files
-*.tmp
-*.temp
-
-# Gradle
-.gradle/
-build/
-
-# Test server
+test-results/
 test-server/world/
 test-server/world_nether/
 test-server/world_the_end/
 test-server/plugins/
-test-server/logs/
 test-server/cache/
 test-server/libraries/
 test-server/versions/
 test-server/*.jar
 test-server/*.json
 test-server/*.yml
-test-server/*.txt
-test-server/crash-reports/
+test-server/*.properties
 test-server/.console_history
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*~
+
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Test server (only keep config templates)
+test-server/*
+!test-server/config-templates/
+
+# Personal/Local config
+local.properties
+*.local
+*.private

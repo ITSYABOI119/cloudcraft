@@ -1,0 +1,37 @@
+# CloudCraft Engine Configuration
+
+# Region Settings
+region:
+  # Size of each region in chunks (default: 8x8)
+  size: 8
+  # Maximum entities per region before splitting
+  max-entities: 1000
+  # Minimum entities per region before merging
+  min-entities: 100
+
+# Threading Settings
+threading:
+  # Maximum number of virtual threads to create
+  max-threads: 256
+  # Thread pool size for background tasks
+  background-pool-size: 4
+  # Enable adaptive thread scaling
+  adaptive-scaling: true
+
+# Performance Settings
+performance:
+  # Metrics collection interval in seconds
+  metrics-interval: 60
+  # Enable detailed performance logging
+  detailed-logging: false
+  # Maximum memory usage in MB before cleanup
+  memory-threshold: 8192
+
+# Debug Settings
+debug:
+  # Enable debug logging
+  enabled: false
+  # Log level (INFO, DEBUG, TRACE)
+  level: INFO
+  # Enable performance profiling
+  profiling: false
