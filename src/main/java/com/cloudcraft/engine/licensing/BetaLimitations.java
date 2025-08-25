@@ -12,7 +12,7 @@ import java.time.temporal.ChronoUnit;
  */
 public class BetaLimitations {
     public static final int MAX_PLAYERS_BETA = 200;
-    public static final Instant BETA_EXPIRY = Instant.parse("2025-03-01T00:00:00Z");
+    public static final Instant BETA_EXPIRY = Instant.now().plus(60, ChronoUnit.DAYS); // 60 days from now
     public static final String UPGRADE_URL = "https://github.com/yourusername/cloudcraft";
     
     /**
@@ -52,7 +52,7 @@ public class BetaLimitations {
         return Component.text("CloudCraft Engine BETA - Limited to " + MAX_PLAYERS_BETA + " players")
             .color(NamedTextColor.GRAY)
             .append(Component.newline())
-            .append(Component.text("Expires: March 1, 2025 - Get the full version at: " + UPGRADE_URL)
+                .append(Component.text("Expires: " + BETA_EXPIRY + " - Get the full version at: " + UPGRADE_URL)
                 .color(NamedTextColor.GRAY));
     }
 }
