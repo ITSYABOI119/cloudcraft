@@ -7,8 +7,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
@@ -28,8 +25,8 @@ import java.util.logging.Level;
  */
 public class StressTest {
     private final CloudCraftEngine plugin;
-    private final ConcurrentHashMap<UUID, FakePlayer> fakePlayers;
-    private final Random random;
+    private final EntitySpawner entitySpawner;
+
     private final MetricsCollector metricsCollector;
     private final Path resultsDir;
     private CommandSender initiator;
@@ -58,9 +55,7 @@ public class StressTest {
     
     // Border characters
     private static final String BORDER = "═".repeat(50);
-    private static final String SIDE_BORDER = "║";
-    private static final String TOP_LEFT = "╔";
-    private static final String TOP_RIGHT = "╗";
+
     private static final String BOTTOM_LEFT = "╚";
     private static final String BOTTOM_RIGHT = "╝";
     private static final String MIDDLE_LEFT = "╠";
@@ -68,8 +63,8 @@ public class StressTest {
     
     public StressTest(@NotNull CloudCraftEngine plugin) {
         this.plugin = plugin;
-        this.fakePlayers = new ConcurrentHashMap<>();
-        this.random = new Random();
+        this.entitySpawner = new EntitySpawner(plugin);
+
         this.metricsCollector = new MetricsCollector(plugin);
         this.resultsDir = plugin.getDataFolder().toPath().resolve("stress-test-results");
         
@@ -107,14 +102,10 @@ public class StressTest {
                     return;
                 }
                 
-                // Spawn in batches for visual effect
-                for (int i = 0; i < 10 && spawnedPlayers.get() < targetPlayerCount; i++) {
-                    spawnFakePlayer();
-                    spawnedPlayers.incrementAndGet();
-                }
-                
-                // Update display
-                updateSpawningDisplay(spawnedPlayers.get());
+                // Start entity spawning
+                entitySpawner.spawnTestEntities(targetPlayerCount, 10, 2);
+                this.cancel();
+                startTestPhase();
             }
         }.runTaskTimer(plugin, 1L, 2L);
     }
@@ -136,16 +127,8 @@ public class StressTest {
             broadcast(line);
         }
     }
-    
-    private void updateSpawningDisplay(int spawned) {
-        int percentage = spawned * 100 / targetPlayerCount;
-        Component message = Component.text("[SPAWNING] ").color(COLOR_WARNING)
-            .append(Component.text("Players: ").color(COLOR_INFO))
-            .append(Component.text(spawned + "/" + targetPlayerCount + " ").color(COLOR_SUCCESS))
-            .append(Component.text("(" + percentage + "%)").color(COLOR_SUBTITLE));
-        
-        broadcast(message);
-    }
+
+
     
     private void startRealTimeDisplay() {
         new BukkitRunnable() {
@@ -205,7 +188,8 @@ public class StressTest {
                 .append(Component.text(currentMemoryMB + " MB ").color(COLOR_SUCCESS))
                 .append(Component.text("(Vanilla: ~2048 MB)").color(COLOR_SUBTITLE)),
             Component.text(" Players: ").color(COLOR_INFO)
-                .append(Component.text(fakePlayers.size() + "/" + targetPlayerCount).color(COLOR_WARNING)),
+                        .append(Component.text(entitySpawner.getTotalEntityCount() + "/" + targetPlayerCount)
+                                .color(COLOR_WARNING)),
             Component.text(" Threads: ").color(COLOR_INFO)
                 .append(Component.text(String.valueOf(currentThreadCount)).color(NamedTextColor.AQUA)),
             Component.text(BOTTOM_LEFT + "─".repeat(48) + BOTTOM_RIGHT).color(COLOR_DETAIL)
@@ -318,7 +302,7 @@ public class StressTest {
             .append(Component.text("Starting " + warmupSeconds + " second warm-up period...").color(COLOR_INFO)));
         
         // Start behavior simulation
-        startPlayerBehaviorSimulation();
+        startEntityBehaviorSimulation();
         
         // Schedule test end
         new BukkitRunnable() {
@@ -337,32 +321,12 @@ public class StressTest {
         }.runTaskTimer(plugin, warmupSeconds * 20L, samplingIntervalTicks);
     }
     
-    private void startPlayerBehaviorSimulation() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                fakePlayers.values().forEach(FakePlayer::simulateBehavior);
-            }
-        }.runTaskTimer(plugin, 1L, 1L);
+    private void startEntityBehaviorSimulation() {
+        // Entity behavior is now handled by the EntityProcessor
+        // No need for manual simulation
     }
     
-    private void spawnFakePlayer() {
-        World world = plugin.getServer().getWorlds().get(0);
-        Location spawnLoc = world.getSpawnLocation();
-        
-        // Randomize spawn position within 100 blocks
-        spawnLoc.add(
-            random.nextDouble() * 200 - 100,
-            0,
-            random.nextDouble() * 200 - 100
-        );
-        
-        // Find safe spawn location
-        spawnLoc.setY(world.getHighestBlockYAt(spawnLoc.getBlockX(), spawnLoc.getBlockZ()) + 1);
-        
-        FakePlayer fakePlayer = new FakePlayer(plugin, spawnLoc);
-        fakePlayers.put(fakePlayer.getUUID(), fakePlayer);
-    }
+    // Removed spawnFakePlayer() as we now use EntitySpawner
     
     private void endTest() {
         // Stop metrics collection
@@ -375,8 +339,7 @@ public class StressTest {
         generateReports();
         
         // Cleanup
-        fakePlayers.values().forEach(FakePlayer::remove);
-        fakePlayers.clear();
+        entitySpawner.removeAll();
     }
     
     private void displayFinalResults() {

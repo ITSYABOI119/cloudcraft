@@ -1,0 +1,48 @@
+---
+description:# CloudCraft Engine Specific Rules
+
+PROJECT CONTEXT:
+This is a Minecraft server performance optimization plugin using Java 21 Virtual Threads.
+The goal is REAL performance improvements through parallel entity processing.
+
+IMPLEMENTATION REQUIREMENTS:
+1. Entity Processing MUST include:
+   - Real AI logic (pathfinding, target selection)
+   - Actual physics calculations
+   - Working collision detection
+   - Valid Bukkit API usage
+
+2. Virtual Thread usage MUST:
+   - Actually parallelize work
+   - Include proper synchronization
+   - Handle region transfers correctly
+   - Measure real performance gains
+
+3. Stress Testing MUST:
+   - Spawn real Minecraft entities (not fake objects)
+   - Measure actual server TPS
+   - Process genuine workloads
+   - Report honest metrics
+
+FORBIDDEN PATTERNS:
+- Never write: // TODO
+- Never write: // Implement later
+- Never write: // Add logic here
+- Never write empty method bodies
+- Never claim performance without measurement
+
+QUALITY STANDARDS:
+- Every optimization must be explained with CS principles
+- Cache optimization must reference actual cache sizes
+- Threading must handle race conditions
+- All claims must be verifiable
+
+EXAMPLE OF REQUIRED COMPLETENESS:
+Instead of:
+```java
+public void processEntity(Entity e) {
+    // TODO: Add processing
+}
+globs:
+alwaysApply: true
+---

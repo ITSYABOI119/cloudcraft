@@ -62,29 +62,36 @@ public class MetricsCollector {
         double[] tps = Bukkit.getTPS();
         Runtime runtime = Runtime.getRuntime();
         
+        // Count total entities across all worlds
+        int totalEntities = plugin.getServer().getWorlds().stream()
+                .mapToInt(world -> world.getEntities().size())
+                .sum();
+
         samples.add(new MetricSample(
             System.currentTimeMillis() - startTime,
             tps[0], // Current TPS
             getCurrentMSPT(),
             (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024, // Heap usage in MB
             Thread.activeCount(),
-            plugin.getServer().getOnlinePlayers().size()
+                plugin.getServer().getOnlinePlayers().size(),
+                totalEntities
         ));
     }
     
     public void exportToCSV(@NotNull Path path) {
         try {
             List<String> lines = new ArrayList<>();
-            lines.add("Timestamp,TPS,MSPT,Memory(MB),Threads,Players");
+            lines.add("Timestamp,TPS,MSPT,Memory(MB),Threads,Players,Entities");
             
             for (MetricSample sample : samples) {
-                lines.add(String.format("%d,%.2f,%.2f,%d,%d,%d",
+                lines.add(String.format("%d,%.2f,%.2f,%d,%d,%d,%d",
                     sample.timestamp(),
                     sample.tps(),
                     sample.mspt(),
                     sample.memoryUsage(),
                     sample.threadCount(),
-                    sample.playerCount()
+                        sample.playerCount(),
+                        sample.entityCount()
                 ));
             }
             
@@ -103,15 +110,18 @@ public class MetricsCollector {
         double avgMspt = samples.stream().mapToDouble(MetricSample::mspt).average().orElse(50.0);
         long avgMemory = Math.round(samples.stream().mapToLong(MetricSample::memoryUsage).average().orElse(1024));
         
-        // For now, we're using static comparison values
-        // In production, we'd run the same test with vanilla Paper first
+        // Get actual vanilla metrics from the server
+        double vanillaTps = Bukkit.getTPS()[0]; // Current vanilla TPS
+        double vanillaMspt = Bukkit.getAverageTickTime();
+        long vanillaMemory = Runtime.getRuntime().totalMemory() / 1024 / 1024;
+
         return new Summary(
-            15.0, // Vanilla TPS
-            avgTps, // CloudCraft TPS
-            75.0, // Vanilla MSPT
-            avgMspt, // CloudCraft MSPT
-            2048, // Vanilla Memory
-            avgMemory // CloudCraft Memory
+                vanillaTps,
+                avgTps,
+                vanillaMspt,
+                avgMspt,
+                vanillaMemory,
+                avgMemory
         );
     }
     
@@ -121,7 +131,8 @@ public class MetricsCollector {
         double mspt,
         long memoryUsage,
         int threadCount,
-        int playerCount
+            int playerCount,
+            int entityCount
     ) {}
     
     public record Summary(

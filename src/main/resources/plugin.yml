@@ -12,3 +12,16 @@ commands:
     usage: /stresstest [players] [duration] [warmup]
     permission: cloudcraft.admin
     permission-message: You must be an operator to use this command.
+  ccdebug:
+    description: Show detailed entity processing statistics
+    usage: /ccdebug
+    permission: cloudcraft.debug
+    permission-message: You must be an operator to use this command.
+
+permissions:
+  cloudcraft.admin:
+    description: Allows use of all CloudCraft commands
+    default: op
+  cloudcraft.debug:
+    description: Allows use of debug commands
+    default: op
