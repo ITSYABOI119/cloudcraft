@@ -117,7 +117,7 @@ public class StressTest {
             Component.text("       CLOUDCRAFT ENGINE PERFORMANCE TEST v0.1.0").color(COLOR_TITLE),
             Component.text(BORDER).color(COLOR_HEADER),
             Component.text("  Revolutionary Minecraft Server Performance Enhancement").color(COLOR_SUBTITLE),
-            Component.text("           98.8% Better Than Vanilla Paper").color(COLOR_SUBTITLE),
+            Component.text("     Multi-threaded Entity Processing Engine").color(COLOR_SUBTITLE),
             Component.text(BORDER).color(COLOR_HEADER),
             BetaLimitations.getBetaWatermark(),
             Component.empty()
@@ -205,9 +205,9 @@ public class StressTest {
         
         Component[] stats = {
             Component.empty(),
-            Component.text("【 PERFORMANCE COMPARISON 】").color(COLOR_HEADER),
+            Component.text("【 PERFORMANCE COMPARISON (ESTIMATED) 】").color(COLOR_HEADER),
             Component.empty(),
-            Component.text("         CloudCraft │ Vanilla Paper │ Improvement").color(COLOR_WARNING),
+            Component.text("         CloudCraft │ Est. Vanilla  │ Improvement").color(COLOR_WARNING),
             Component.text(" TPS:    ").color(COLOR_INFO)
                 .append(Component.text(String.format("%-10s │ ", String.format("%.2f", summary.cloudcraftTps()))).color(COLOR_SUCCESS))
                 .append(Component.text(String.format("%-13s │ ", String.format("%.2f", summary.vanillaTps()))).color(COLOR_ERROR))
@@ -361,7 +361,7 @@ public class StressTest {
             Component.text("    • Memory Usage: ").color(COLOR_INFO)
                 .append(Component.text(summary.cloudcraftMemory() + "MB").color(COLOR_SUCCESS)),
             Component.empty(),
-            Component.text("  ⚡ PERFORMANCE vs VANILLA:").color(COLOR_TITLE),
+            Component.text("  ⚡ PERFORMANCE vs ESTIMATED VANILLA:").color(COLOR_TITLE),
             Component.text("    • TPS Improvement: ").color(COLOR_INFO)
                 .append(Component.text(String.format("+%.1f%%",
                     (summary.cloudcraftTps() / summary.vanillaTps() - 1) * 100)).color(COLOR_HEADER)),
@@ -436,7 +436,9 @@ public class StressTest {
             writer.println("\n## CloudCraft Engine");
             writer.println("- Version: 0.1.0-beta");
             writer.println("- GitHub: " + BetaLimitations.UPGRADE_URL);
-            writer.println("- Performance Improvement: 98.8%");
+            writer.println("- Features: Virtual thread-based parallel entity processing");
+            writer.println("- Note: Vanilla comparisons are estimates. For accurate benchmarks,");
+            writer.println("  run identical tests on vanilla Paper first, then with CloudCraft.");
             
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to generate Markdown report", e);

@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.stream.Collectors;
-import java.util.logging.Level;
 
 /**
  * Optimized entity processor using differential snapshots and async processing
@@ -300,7 +299,6 @@ public class EntityProcessor {
         final UUID id;
         final EntityType type;
         final Location position;
-        final Vector velocity;
         final int ticksLived;
         final boolean canBreed;
         final boolean isInLove;
@@ -309,7 +307,6 @@ public class EntityProcessor {
             this.id = entity.getUniqueId();
             this.type = entity.getType();
             this.position = entity.getLocation().clone();
-            this.velocity = entity.getVelocity().clone();
             this.ticksLived = entity.getTicksLived();
 
             if (entity instanceof Animals animals) {
@@ -353,12 +350,10 @@ public class EntityProcessor {
      */
     private static class EntityDecision {
         final UUID entityId;
-        final EntityType entityType;
         final List<Action> actions;
 
-        EntityDecision(UUID entityId, EntityType entityType, List<Action> actions) {
+        EntityDecision(UUID entityId, List<Action> actions) {
             this.entityId = entityId;
-            this.entityType = entityType;
             this.actions = actions;
         }
 
@@ -377,12 +372,10 @@ public class EntityProcessor {
 
         static class Builder {
             private final UUID entityId;
-            private final EntityType entityType;
             private final List<Action> actions = new ArrayList<>();
 
             Builder(UUID entityId, EntityType entityType) {
                 this.entityId = entityId;
-                this.entityType = entityType;
             }
 
             void move(Vector velocity) {
@@ -410,7 +403,7 @@ public class EntityProcessor {
             }
 
             EntityDecision build() {
-                return new EntityDecision(entityId, entityType, new ArrayList<>(actions));
+                return new EntityDecision(entityId, new ArrayList<>(actions));
             }
         }
     }
@@ -476,7 +469,32 @@ public class EntityProcessor {
     private record MergeAction(UUID otherId) implements Action {
         @Override
         public void apply(Entity entity, org.bukkit.Server server) {
-            // Item merging logic would go here
+            if (entity instanceof Item item1) {
+                for (World world : server.getWorlds()) {
+                    Entity other = world.getEntity(otherId);
+                    if (other instanceof Item item2 && !item1.equals(item2)) {
+                        // Check if items can be merged (same type, not too old)
+                        if (canMergeItems(item1, item2)) {
+                            mergeItems(item1, item2);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        
+        private boolean canMergeItems(Item item1, Item item2) {
+            // Check if items are the same type and can stack
+            return item1.getItemStack().isSimilar(item2.getItemStack()) &&
+                   item1.getItemStack().getAmount() + item2.getItemStack().getAmount() <= 
+                   item1.getItemStack().getMaxStackSize() &&
+                   item1.getTicksLived() > 10 && item2.getTicksLived() > 10; // Prevent immediate merging
+        }
+        
+        private void mergeItems(Item item1, Item item2) {
+            int totalAmount = item1.getItemStack().getAmount() + item2.getItemStack().getAmount();
+            item1.getItemStack().setAmount(totalAmount);
+            item2.remove(); // Remove the merged item
         }
     }
 }
